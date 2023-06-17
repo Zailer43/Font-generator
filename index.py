@@ -31,6 +31,8 @@ def erase_font_shape(texture, font, offset_x=0):
                 texture.putpixel((x + offset_x, y), (0, 0, 0, 0))  # Set pixel to fully transparent
 
 
+results_path = "./results/"
+
 def process_fonts(fonts, font_textures, base_texture, watermark, user_option):
     for font in tqdm(fonts, desc="Processing Fonts"):
         font_texture = random.choice(font_textures)
@@ -48,14 +50,23 @@ def process_fonts(fonts, font_textures, base_texture, watermark, user_option):
         if user_option == 3 or user_option == 4:
             erase_font_shape(result, font, offset_x=32)
 
-        result.save(f"./results/{os.path.basename(font.filename)}")
-
+        result.save(f"{results_path}{os.path.basename(font.filename)}")
 
 def main():
-    font_path = "./textures/font/"
-    font_textures_path = "./textures/font_texture/"
-    base_texture_path = "./textures/base_texture.png"
-    watermark_path = "./textures/watermark.png"
+    textures_path = "./textures"
+    font_path = f"{textures_path}/font/"
+    font_textures_path = f"{textures_path}/font_texture/"
+    base_texture_path = f"{textures_path}/base_texture.png"
+    watermark_path = f"{textures_path}/watermark.png"
+
+    if not os.path.exists(f"{textures_path}/"):
+        os.mkdir(f"{textures_path}/")
+
+    if not os.path.exists(font_path):
+        os.mkdir(font_path)
+
+    if not os.path.exists(font_textures_path):
+        os.mkdir(font_textures_path)
 
     # Load textures
     fonts = load_textures(font_path, 32, 16)
@@ -65,6 +76,9 @@ def main():
 
     # User prompt
     user_option = int(input("Choose the desired result:\n1: Use texture on the first layer\n2: Use texture on the second layer\n3: Erase letter on the second layer\n4: Texture on the first layer and erase letter on the second layer\n"))
+
+    if not os.path.exists(results_path):
+        os.mkdir(results_path)
 
     # Process fonts
     process_fonts(fonts, font_textures, base_texture, watermark, user_option)
